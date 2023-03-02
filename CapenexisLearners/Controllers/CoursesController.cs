@@ -20,11 +20,17 @@ namespace CapenexisLearners.Controllers
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-              return _context.Courses != null ? 
-                          View(await _context.Courses.ToListAsync()) :
-                          Problem("Entity set 'CapenexisLearnersContext.Courses'  is null.");
+            var Courses = from c in _context.Courses
+                           select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                Courses = Courses.Where(s => s.CourseName!.Contains(searchString) || s.Description!.Contains(searchString));
+            }
+
+            return View(await Courses.ToListAsync());
         }
 
         // GET: Courses/Details/5
